@@ -11,6 +11,9 @@ import { LoginComponent } from './account/login/login.component';
 import { RegisterComponent } from './account/register/register.component';
 import { SharedModule } from './shared/shared.module';
 import { AboutComponent } from './about/about.component';
+import { StartComponent } from './start/start.component';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { JwtInterceptor } from './shared/interceptors/jwt.interceptor';
 
 @NgModule({
   declarations: [
@@ -18,7 +21,8 @@ import { AboutComponent } from './about/about.component';
     NavbarComponent,
     FooterComponent,
     HomeComponent,
-    AboutComponent
+    AboutComponent,
+    StartComponent
   ],
   imports: [
     BrowserModule,
@@ -26,7 +30,9 @@ import { AboutComponent } from './about/about.component';
     SharedModule,
     BrowserAnimationsModule
   ],
-  providers: [],
+  providers: [
+    {provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true}
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

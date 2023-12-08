@@ -10,25 +10,36 @@
           <div class="collapse navbar-collapse">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
-                   <a class="nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Accueil</a>
+                   <a class="nav-link" routerLink="/" routerLinkActive="active" 
+                       [routerLinkActiveOptions]="{exact: true}">Accueil</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" routerLink="/start" routerLinkActive="active">Démarrer</a>
+                 </li>                  
                 <li class="nav-item">
                     <a class="nav-link" routerLink="/about" routerLinkActive="active">A Propos</a>
                  </li>                
             </ul>
 
-            <ul class="navbar-nav">
-                <li>
+            <ul class="navbar-nav" *ngIf="(accountService.user$ | async) === null">
+                <li class="nav-item">
                     <a class="btn btn-secondary mx-2" routerLink="/account/register" routerLinkActive="active">
                         Créer un compte 
                     </a>
                 </li>
-                <li>
+                <li class="nav-item">
                     <a class="btn btn-secondary" routerLink="/account/login" routerLinkActive="active">
                         Se connecter
                     </a>
                 </li>                
             </ul>
+
+            <div class="d-flex align-items-center" *ngIf="(accountService.user$ | async) as user">
+                <a class="text-while" style="text-decoration: none; cursor: pointer;">
+                    Hi <span class="h3 text-warning">{{user.firstName| titlecase}}</span>
+                </a>
+                <a class="btn btn-secondary ms-2" (click)="logout()">Déconnexion</a>
+            </div>
 
           </div>
       </div>
