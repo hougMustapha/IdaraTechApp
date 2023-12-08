@@ -1,6 +1,7 @@
 using IdaraTech_Admin.Data;
 using IdaraTech_Admin.Models;
 using IdaraTech_Admin.Services;
+using IdaraTechApi.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
@@ -28,6 +29,7 @@ builder.Services.AddDbContext<Context>(options =>
 });
 
 builder.Services.AddScoped<JWTService>();
+builder.Services.AddScoped<EmailService>();
 
 builder.Services.AddIdentityCore<User>(options =>
 {
