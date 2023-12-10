@@ -24,7 +24,7 @@
                     [class.is-invalid]="submitted && registerForm.get('lastname')?.errors">
                     <label for="lastname">Nom</label>
                     <span class="text-danger" *ngIf="submitted && registerForm.get('lastname')?.hasError('required')">
-                        Last name is required
+                        Last is required
                     </span>
                     <span class="text-danger" *ngIf="submitted && 
                        registerForm.get('lastname')?.hasError('minlength') || registerForm.get('lastname')?.hasError('maxlength')">
