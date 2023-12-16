@@ -1,0 +1,46 @@
+<div class="d-flex justify-content-center" *ngIf="provider && access_token && userId">
+    <div class="col-12 col-lg-5">
+        <main class="form-signin">
+            <form [formGroup]="registerForm" (ngSubmit)="register()" autocomplete="off">
+                <div class="text-center mb-4">
+                    <h3 class="mb-3 font-weight-normal">
+                        Créer un compte en utilisant votre <span class="text-warning">{{provider | titlecase}}</span>
+                    </h3>
+                </div>
+                <div class="form-floating mb-3">
+                    <input formControlName="firstname" type="text" placeholder="Prénom" class="form-control"
+                    [class.is-invalid]="submitted && registerForm.get('firstname')?.errors">
+                    <label for="firstname">Prénom</label>
+                    <span class="text-danger" *ngIf="submitted && registerForm.get('firstname')?.hasError('required')">
+                        First name is required
+                    </span>
+                    <span class="text-danger" *ngIf="submitted && 
+                        registerForm.get('firstname')?.hasError('minlength') || registerForm.get('firstname')?.hasError('maxlength')">
+                        First name must be at least 3, and maximum 15 characters
+                    </span>                    
+                </div>
+                <div class="form-floating mb-3">
+                    <input formControlName="lastname" type="text" placeholder="Nom" class="form-control"
+                    [class.is-invalid]="submitted && registerForm.get('lastname')?.errors">
+                    <label for="lastname">Nom</label>
+                    <span class="text-danger" *ngIf="submitted && registerForm.get('lastname')?.hasError('required')">
+                        Last name is required
+                    </span>
+                    <span class="text-danger" 
+                       *ngIf="submitted && 
+                       registerForm.get('lastname')?.hasError('minlength') || registerForm.get('lastname')?.hasError('maxlength')">
+                       Last name must be at least 3, and maximum 15 characters
+                    </span>                     
+                </div>                                
+
+                <div class="form-floatin" *ngIf="errorMessages.length > 0">
+                    <app-validation-messages [errorMessages]="errorMessages"></app-validation-messages>                    
+                </div>
+
+                <div class="d-grid mt-4 px-1">
+                    <button class="btn btn-lg btn-info" type="submit">Créer un compte</button>
+                </div>
+            </form>
+        </main>
+    </div>
+</div>

@@ -24,7 +24,7 @@
                     [class.is-invalid]="submitted && registerForm.get('lastname')?.errors">
                     <label for="lastname">Nom</label>
                     <span class="text-danger" *ngIf="submitted && registerForm.get('lastname')?.hasError('required')">
-                        Last is required
+                        Last name is required
                     </span>
                     <span class="text-danger" *ngIf="submitted && 
                        registerForm.get('lastname')?.hasError('minlength') || registerForm.get('lastname')?.hasError('maxlength')">
@@ -65,6 +65,21 @@
                 </div>
             </form>
 
+            <div class="row d-flex justify-content-center mt-3">
+                <div class="col-3">
+                    <hr>
+                </div>
+                <div class="col-5 text ">Ou inscrivez-vous en utilisant</div>
+                <div class="col-3">
+                    <hr>
+                </div>
+            </div>
+            <div class="d-flex justify-content-between my-3">
+                <div #googleButton></div>
+                <button style="width: 180px;" class="btn btn-primary btn-sm" (click)="registerWithFacebook()">
+                    Facebook
+                </button>
+            </div>
         </main>
 
     </div>

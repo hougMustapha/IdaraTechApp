@@ -13,12 +13,15 @@
                    <a class="nav-link" routerLink="/" routerLinkActive="active" 
                        [routerLinkActiveOptions]="{exact: true}">Accueil</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" routerLink="/start" routerLinkActive="active">Démarrer</a>
-                 </li>                  
-                <li class="nav-item">
-                    <a class="nav-link" routerLink="/about" routerLinkActive="active">A Propos</a>
-                 </li>                
+                <ng-container *ngIf="accountService.user$ | async">
+                    <li class="nav-item">
+                        <a class="nav-link" routerLink="/start" routerLinkActive="active">Démarrer</a>
+                     </li>   
+            
+                    <li class="nav-item">
+                        <a class="nav-link" routerLink="/about" routerLinkActive="active">A Propos</a>
+                    </li>                      
+                </ng-container>                 
             </ul>
 
             <ul class="navbar-nav" *ngIf="(accountService.user$ | async) === null">
