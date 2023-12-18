@@ -69,7 +69,32 @@ namespace IdaraTech_Admin.Controllers
             if (user.EmailConfirmed == false) return Unauthorized("Please confirm your email.");
 
             var result = await _signInManager.CheckPasswordSignInAsync(user, model.Password, false);
-            if (!result.Succeeded) return Unauthorized("Invalid username or password");
+
+            if (result.IsLockedOut)
+            {
+                return Unauthorized(string.Format("Vôtre compte a été bloqué. Vous devez attendre jusqu'à {0} (heure UTC) pour pouvoir vous connecter", user.LockoutEnd));
+            }
+
+            if (!result.Succeeded)
+            {
+                if (!user.UserName.Equals(SD.SuperAdminUserName))
+                {
+                    // Increamenting AccessFailedCount of the AspNetUser by 1
+                    await _userManager.AccessFailedAsync(user);
+                }
+
+                if (user.AccessFailedCount >= SD.MaximumLoginAttempts)
+                {
+                    // Lock the user for one day
+                    await _userManager.SetLockoutEndDateAsync(user, DateTime.UtcNow.AddDays(1));
+                    return Unauthorized(string.Format("Vôtre compte a été bloqué. Vous devez attendre jusqu'à {0} (heure UTC) pour pouvoir vous connecter", user.LockoutEnd));
+                }
+
+                return Unauthorized("Invalid username or password");
+            }
+
+            await _userManager.ResetAccessFailedCountAsync(user);
+            await _userManager.SetLockoutEndDateAsync(user, null);
 
             return await CreateApplicationUserDto(user);
         }
@@ -135,6 +160,7 @@ namespace IdaraTech_Admin.Controllers
 
             var result = await _userManager.CreateAsync(userToAdd, model.Password);
             if (!result.Succeeded) return BadRequest(result.Errors);
+            await _userManager.AddToRoleAsync(userToAdd, SD.CitizenRole);
 
             try 
             {
@@ -201,6 +227,7 @@ namespace IdaraTech_Admin.Controllers
 
             var result = await _userManager.CreateAsync(userToAdd);
             if (!result.Succeeded) return BadRequest(result.Errors);
+            await _userManager.AddToRoleAsync(userToAdd, SD.CitizenRole);
 
             return await CreateApplicationUserDto(userToAdd);
         }

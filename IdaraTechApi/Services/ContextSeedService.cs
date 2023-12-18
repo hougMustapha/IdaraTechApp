@@ -48,8 +48,8 @@ namespace IdaraTechApi.Services
                 {
                     FirstName = "Super Admin",
                     LastName = "Mustapha",
-                    UserName = "superAdmin@example.com",
-                    Email = "superAdmin@example.com",
+                    UserName = SD.SuperAdminUserName,
+                    Email = SD.SuperAdminUserName,
                     EmailConfirmed = true
                 };
                 await _userManager.CreateAsync(superAdmin, "123456");
