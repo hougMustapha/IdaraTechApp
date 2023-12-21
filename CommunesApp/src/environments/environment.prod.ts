@@ -1,5 +1,5 @@
 export const environment = {
     production: true,
-    appUrl: 'idaratechapi/',
+    appUrl: 'api/',
     userKey: 'identityAppUser'
 };

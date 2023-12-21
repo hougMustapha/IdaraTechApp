@@ -1,7 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Register } from '../shared/models/account/register';
-import { environment } from 'src/environments/environment.development';
 import { Login } from '../shared/models/account/login';
 import { User } from '../shared/models/account/user';
 import { ReplaySubject, map, of, take } from 'rxjs';
@@ -12,6 +11,7 @@ import { RegisterWithExternal } from '../shared/models/account/registerWithExter
 import { LoginWithExternal } from '../shared/models/account/LoginWithExternal';
 import { jwtDecode } from 'jwt-decode';
 import { SharedService } from '../shared/shared.service';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -60,7 +60,7 @@ export class AccountService {
     }
 
   login(model: Login) {
-    return this.http.post<User>(`${environment.appUrl}/api/account/login`, model).pipe(
+    return this.http.post<User>(`${environment.appUrl}account/login`, model).pipe(
       map((user: User) => {
         if (user) {
           this.setUser(user);
@@ -70,7 +70,7 @@ export class AccountService {
   }
 
   loginWithThirdParty(model: LoginWithExternal) {
-    return this.http.post<User>(`${environment.appUrl}/api/account/login-with-third-party`, model).pipe(
+    return this.http.post<User>(`${environment.appUrl}account/login-with-third-party`, model).pipe(
       map((user: User) => {
         if (user) {
           this.setUser(user);
@@ -86,11 +86,11 @@ export class AccountService {
   }
 
   register(model: Register) {
-    return this.http.post(`${environment.appUrl}/api/account/register`, model);
+    return this.http.post(`${environment.appUrl}account/register`, model);
   }
 
   registerWithThirdParty(model: RegisterWithExternal) {
-    return this.http.post<User>(`${environment.appUrl}/api/account/register-with-third-party`, model).pipe(
+    return this.http.post<User>(`${environment.appUrl}account/register-with-third-party`, model).pipe(
       map((user: User) => {
         if (user) {
           this.setUser(user);
@@ -100,19 +100,19 @@ export class AccountService {
   }
 
   confirmEmail(model: ConfirmEmail) {
-    return this.http.put(`${environment.appUrl}/api/account/confirm-email`, model);
+    return this.http.put(`${environment.appUrl}account/confirm-email`, model);
   }
 
   resendEmailConfirmationLink(email: string){
-    return this.http.post(`${environment.appUrl}/api/account/resend-email-confirmation-link/${email}`, {});
+    return this.http.post(`${environment.appUrl}account/resend-email-confirmation-link/${email}`, {});
   }
 
   forgotUsernameOrPassword(email: string) {
-    return this.http.post(`${environment.appUrl}/api/account/forgot-username-or-password/${email}`, {});
+    return this.http.post(`${environment.appUrl}account/forgot-username-or-password/${email}`, {});
   }
 
   resetPassword(model: ResetPassword) {
-    return this.http.put(`${environment.appUrl}/api/account/reset-password`, model);
+    return this.http.put(`${environment.appUrl}account/reset-password`, model);
   }
 
   getJWT() {
