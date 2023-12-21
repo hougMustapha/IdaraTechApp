@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace IdaraTechApi.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class AddinUserToDatabase : Migration
+    public partial class AddingUserToDatabase : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

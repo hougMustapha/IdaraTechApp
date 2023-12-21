@@ -33,39 +33,51 @@ builder.Services.AddDbContext<Context>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
+// be able to inject JWTService class inside our Controllers
 builder.Services.AddScoped<JWTService>();
 builder.Services.AddScoped<EmailService>();
 builder.Services.AddScoped<ContextSeedService>();
 
+// defining our IdentityCore Service
 builder.Services.AddIdentityCore<User>(options =>
 {
+    // password configuration
     options.Password.RequiredLength = 6;
     options.Password.RequireDigit = false;
     options.Password.RequireLowercase = false;
     options.Password.RequireUppercase = false;
     options.Password.RequireNonAlphanumeric = false;
 
+    // for email confirmation
     options.SignIn.RequireConfirmedEmail = true;
 })
-    .AddRoles<IdentityRole>()
-    .AddRoleManager<RoleManager<IdentityRole>>()
-    .AddEntityFrameworkStores<Context>()
-    .AddSignInManager<SignInManager<User>>()
-    .AddUserManager<UserManager<User>>()
-    .AddDefaultTokenProviders();
+    .AddRoles<IdentityRole>() // be able to add roles
+    .AddRoleManager<RoleManager<IdentityRole>>() // be able to make use of RoleManager
+    .AddEntityFrameworkStores<Context>() // providing our context
+    .AddSignInManager<SignInManager<User>>() // make use of Signin manager
+    .AddUserManager<UserManager<User>>() // make use of UserManager to create users
+    .AddDefaultTokenProviders(); // be able to create tokens for email confirmation
 
+// be able to authenticate users using JWT
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-  .AddJwtBearer(options =>
-  {
-      options.TokenValidationParameters = new TokenValidationParameters
-      {
-          ValidateIssuerSigningKey = true,
-          IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"])),
-          ValidIssuer = builder.Configuration["JWT:Issuer"],
-          ValidateIssuer = true,
-          ValidateAudience = false
-      };
-  });
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            // validate the token based on the key we have provided inside appsettings.development.json JWT:Key
+            ValidateIssuerSigningKey = true,
+            // the issuer singning key based on JWT:Key
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"])),
+            // the issuer which in here is the api project url we are using
+            ValidIssuer = builder.Configuration["JWT:Issuer"],
+            // validate the issuer (who ever is issuing the JWT)
+            ValidateIssuer = true,
+            // don't validate audience (angular side)
+            ValidateAudience = false,
+            ValidateLifetime = true,
+            ClockSkew = TimeSpan.Zero
+        };
+    });
 
 builder.Services.AddCors();
 
@@ -89,21 +101,19 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
 
 builder.Services.AddAuthorization(opt =>
 {
-    opt.AddPolicy("SuperAdminPolicy", policy => policy.RequireRole("SuperAdmin"));
     opt.AddPolicy("AdminPolicy", policy => policy.RequireRole("Admin"));
     opt.AddPolicy("ManagerPolicy", policy => policy.RequireRole("Manager"));
-    opt.AddPolicy("CustomerPolicy", policy => policy.RequireRole("Customer"));
-    opt.AddPolicy("CitizenPolicy", policy => policy.RequireRole("Citoyen"));
+    opt.AddPolicy("PlayerPolicy", policy => policy.RequireRole("Player"));
 
     opt.AddPolicy("AdminOrManagerPolicy", policy => policy.RequireRole("Admin", "Manager"));
     opt.AddPolicy("AdminAndManagerPolicy", policy => policy.RequireRole("Admin").RequireRole("Manager"));
-    opt.AddPolicy("AllRolePolicy", policy => policy.RequireRole("SuperAdmin", "Admin", "Manager", "Customer", "Citoyen"));
+    opt.AddPolicy("AllRolePolicy", policy => policy.RequireRole("Admin", "Manager", "Player"));
 
     opt.AddPolicy("AdminEmailPolicy", policy => policy.RequireClaim(ClaimTypes.Email, "admin@example.com"));
-    opt.AddPolicy("HananeSurnamePolicy", policy => policy.RequireClaim(ClaimTypes.Surname, "Hanane"));
-    opt.AddPolicy("ManagerEmailAndNacerSurnamePolicy", policy => policy.RequireClaim(ClaimTypes.Surname, "Nacer")
+    opt.AddPolicy("MillerSurnamePolicy", policy => policy.RequireClaim(ClaimTypes.Surname, "miller"));
+    opt.AddPolicy("ManagerEmailAndWilsonSurnamePolicy", policy => policy.RequireClaim(ClaimTypes.Surname, "wilson")
         .RequireClaim(ClaimTypes.Email, "manager@example.com"));
-    opt.AddPolicy("SHIPPolicy", policy => policy.RequireAssertion(context => SD.SHIPPolicy(context)));
+    opt.AddPolicy("VIPPolicy", policy => policy.RequireAssertion(context => SD.VIPPolicy(context)));
 });
 
 var app = builder.Build();
@@ -111,7 +121,7 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 app.UseCors(opt =>
 {
-    opt.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins(builder.Configuration["JWT:ClientUrl"]);
+    opt.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins("https://localhost:4200");
 });
 
 if (app.Environment.IsDevelopment())
@@ -122,10 +132,17 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+// adding UseAuthentication into our pipeline and this should come before UseAuthorization
+// Authentication verifies the identity of a user or service, and authorization determines their access rights.
 app.UseAuthentication();
 app.UseAuthorization();
 
+// is going to look for index.html and serving our api application using index.html
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
 app.MapControllers();
+app.MapFallbackToController("Index", "Fallback");
 
 #region ContextSeed
 using var scope = app.Services.CreateScope();
@@ -134,7 +151,7 @@ try
     var contextSeedService = scope.ServiceProvider.GetService<ContextSeedService>();
     await contextSeedService.InitializeContextAsync();
 }
-catch(Exception ex)
+catch (Exception ex)
 {
     var logger = scope.ServiceProvider.GetService<ILogger<Program>>();
     logger.LogError(ex.Message, "Failed to initialize and seed the database");

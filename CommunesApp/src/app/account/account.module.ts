@@ -2,19 +2,27 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
-import { AccountRootingModule } from './account.rooting.module';
 import { SharedModule } from '../shared/shared.module';
+import { ConfirmEmailComponent } from './confirm-email/confirm-email.component';
+import { SendEmailComponent } from './send-email/send-email.component';
+import { ResetPasswordComponent } from './reset-password/reset-password.component';
+import { RegisterWithThirdPartyComponent } from './register-with-third-party/register-with-third-party.component';
+import { AccountRoutingModule } from './account.rooting.module';
 
 
 
 @NgModule({
   declarations: [
     LoginComponent,
-    RegisterComponent
+    RegisterComponent,
+    ConfirmEmailComponent,
+    SendEmailComponent,
+    ResetPasswordComponent,
+    RegisterWithThirdPartyComponent
   ],
   imports: [
     CommonModule,
-    AccountRootingModule,
+    AccountRoutingModule,
     SharedModule
   ]
 })

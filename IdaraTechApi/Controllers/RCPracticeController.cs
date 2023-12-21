@@ -16,12 +16,6 @@ namespace IdaraTechApi.Controllers
 
         #region Roles
 
-        [HttpGet("superAdmin-role")]
-        [Authorize(Roles = "SuperAdmin")]
-        public IActionResult SuperAdminRole()
-        {
-            return Ok("super admin role");
-        }
 
         [HttpGet("admin-role")]
         [Authorize(Roles = "Admin")]
@@ -37,51 +31,29 @@ namespace IdaraTechApi.Controllers
             return Ok("manager role");
         }
 
-        [HttpGet("customer-role")]
-        [Authorize(Roles = "Customer")]
-        public IActionResult CustomerRole()
+        [HttpGet("player-role")]
+        [Authorize(Roles = "Player")]
+        public IActionResult PlayerRole()
         {
-            return Ok("customer role");
-        }
-
-        [HttpGet("citoyen-role")]
-        [Authorize(Roles = "Citoyen")]
-        public IActionResult CitizenRole()
-        {
-            return Ok("citoyen role");
+            return Ok("player role");
         }
 
         [HttpGet("admin-or-manager-role")]
-        [Authorize(Roles = "Admin, Manager")]
+        [Authorize(Roles = "Admin,Manager")]
         public IActionResult AdminOrManagerRole()
         {
             return Ok("admin or manager role");
         }
 
-        [HttpGet("admin-or-customer-role")]
-        [Authorize(Roles = "Admin, Customer")]
-        public IActionResult AdminOrCustomerRole()
+        [HttpGet("admin-or-player-role")]
+        [Authorize(Roles = "Admin,Player")]
+        public IActionResult AdminOrPlayerRole()
         {
-            return Ok("admin or customer role");
+            return Ok("admin or player role");
         }
-
-        [HttpGet("admin-or-citoyen-role")]
-        [Authorize(Roles = "Admin, Citoyen")]
-        public IActionResult AdminOrCitoyenRole()
-        {
-            return Ok("admin or citoyen role");
-        }
-
         #endregion
 
         #region Policy
-
-        [HttpGet("superAdmin-policy")]
-        [Authorize(policy: "SuperAdminPolicy")]
-        public IActionResult SuperAdminPolicy()
-        {
-            return Ok("super admin policy");
-        }
 
         [HttpGet("admin-policy")]
         [Authorize(policy: "AdminPolicy")]
@@ -97,19 +69,13 @@ namespace IdaraTechApi.Controllers
             return Ok("manager policy");
         }
 
-        [HttpGet("customer-policy")]
-        [Authorize(policy: "CustomerPolicy")]
-        public IActionResult CustomerPolicy()
+        [HttpGet("player-policy")]
+        [Authorize(policy: "PlayerPolicy")]
+        public IActionResult PlayerPolicy()
         {
-            return Ok("customer policy");
+            return Ok("player policy");
         }
 
-        [HttpGet("citizen-policy")]
-        [Authorize(policy: "CitizenPolicy")]
-        public IActionResult CitizenPolicy()
-        {
-            return Ok("citoyen policy");
-        }
 
         [HttpGet("admin-or-manager-policy")]
         [Authorize(policy: "AdminOrManagerPolicy")]
@@ -122,14 +88,14 @@ namespace IdaraTechApi.Controllers
         [Authorize(policy: "AdminAndManagerPolicy")]
         public IActionResult AdminAndManagerPolicy()
         {
-            return Ok("admin and manager policy\"");
+            return Ok("admin and manager policy");
         }
 
         [HttpGet("all-role-policy")]
         [Authorize(policy: "AllRolePolicy")]
         public IActionResult AllRolePolicy()
         {
-            return Ok("all roles policy");
+            return Ok("all role policy");
         }
 
         #endregion
@@ -143,27 +109,26 @@ namespace IdaraTechApi.Controllers
             return Ok("admin email policy");
         }
 
-        [HttpGet("hanane-surname-policy")]
-        [Authorize(policy: "HananeSurnamePolicy")]
-        public IActionResult HananeSurnamePolicy()
+        [HttpGet("miller-surname-policy")]
+        [Authorize(policy: "MillerSurnamePolicy")]
+        public IActionResult MillerSurnamePolicy()
         {
-            return Ok("hanane surname policy");
+            return Ok("miller surname policy");
         }
 
-        [HttpGet("manager-email-and-nacer-surname-policy")]
-        [Authorize(policy: "ManagerEmailAndNacerSurnamePolicy")]
-        public IActionResult ManagerEmailAndNacerSurnamePolicy()
+        [HttpGet("manager-email-and-wilson-surname-policy")]
+        [Authorize(policy: "ManagerEmailAndWilsonSurnamePolicy")]
+        public IActionResult ManagerEmailAndWilsonSurnamePolicy()
         {
-            return Ok("manager email and nacer surname policy");
+            return Ok("manager email and wilson surname policy");
         }
 
-        [HttpGet("ship-policy")]
-        [Authorize(policy: "SHIPPolicy")]
-        public IActionResult SHIPPolicy()
+        [HttpGet("vip-policy")]
+        [Authorize(policy: "VIPPolicy")]
+        public IActionResult VIPPolicy()
         {
-            return Ok("ship policy");
+            return Ok("vip policy");
         }
-
 
         #endregion
     }

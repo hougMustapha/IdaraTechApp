@@ -1,5 +1,4 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
@@ -16,6 +15,7 @@ const routes: Routes = [
   { path: 'reset-password', component: ResetPasswordComponent },
   { path: 'register/third-party/:provider', component: RegisterWithThirdPartyComponent },
 ]
+
 @NgModule({
   declarations: [],
   imports: [
@@ -25,4 +25,4 @@ const routes: Routes = [
     RouterModule
   ]
 })
-export class AccountRootingModule { }
+export class AccountRoutingModule { }

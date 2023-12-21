@@ -7,12 +7,12 @@ namespace IdaraTechApi.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class StartController : ControllerBase
+    public class PlayController : ControllerBase
     {
-        [HttpGet("get-starters")]
-        public IActionResult Starters()
+        [HttpGet("get-players")]
+        public IActionResult Players()
         {
-            return Ok(new JsonResult(new { message = "Seuls les utilisateurs autorisés peuvent voir ce contenu" }));
+            return Ok(new JsonResult(new { message = "Only authorized users can view players" }));
         }
     }
 }

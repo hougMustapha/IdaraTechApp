@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace IdaraTechApi.Controllers
 {
-    [Authorize(Roles = "SuperAdmin")]
+    [Authorize(Roles = "Admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class AdminController : ControllerBase
@@ -32,17 +32,26 @@ namespace IdaraTechApi.Controllers
         [HttpGet("get-members")]
         public async Task<ActionResult<IEnumerable<MemberViewDto>>> GetMembers()
         {
-            var members = await _userManager.Users
-                .Where(x => x.UserName != SD.SuperAdminUserName)
-                .Select(member => new MemberViewDto
+            List<MemberViewDto> members = new List<MemberViewDto>();
+            var users = await _userManager.Users
+                .Where(x => x.UserName != SD.AdminUserName)
+                .ToListAsync();
+
+            foreach (var user in users)
+            {
+                var memberToAdd = new MemberViewDto
                 {
-                    Id = member.Id,
-                    UserName = member.UserName,
-                    FirstName = member.LastName,
-                    DateCreated = member.DateCreated,
-                    IsLocked = _userManager.IsLockedOutAsync(member).GetAwaiter().GetResult(),
-                    Roles = _userManager.GetRolesAsync(member).GetAwaiter().GetResult()
-                }).ToListAsync();
+                    Id = user.Id,
+                    UserName = user.UserName,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    DateCreated = user.DateCreated,
+                    IsLocked = await _userManager.IsLockedOutAsync(user),
+                    Roles = await _userManager.GetRolesAsync(user),
+                };
+
+                members.Add(memberToAdd);
+            }
 
             return Ok(members);
         }
@@ -50,16 +59,18 @@ namespace IdaraTechApi.Controllers
         [HttpGet("get-member/{id}")]
         public async Task<ActionResult<MemberAddEditDto>> GetMember(string id)
         {
-            var member = await _userManager.Users
-                .Where(x => x.UserName != SD.SuperAdminUserName && x.Id == id)
-                .Select(m => new MemberAddEditDto
-                {
-                    Id = m.Id,
-                    UserName = m.UserName,
-                    FirstName = m.FirstName,
-                    LastName = m.LastName,
-                    Roles = string.Join(",", _userManager.GetRolesAsync(m).GetAwaiter().GetResult())
-                }).FirstOrDefaultAsync();
+            var user = await _userManager.Users
+                .Where(x => x.UserName != SD.AdminUserName && x.Id == id)
+                .FirstOrDefaultAsync();
+
+            var member = new MemberAddEditDto
+            {
+                Id = user.Id,
+                UserName = user.UserName,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Roles = string.Join(",", await _userManager.GetRolesAsync(user))
+            };
 
             return Ok(member);
         }
@@ -71,10 +82,10 @@ namespace IdaraTechApi.Controllers
 
             if (string.IsNullOrEmpty(model.Id))
             {
-                // adding a new mmember
+                // adding a new member
                 if (string.IsNullOrEmpty(model.Password) || model.Password.Length < 6)
                 {
-                    ModelState.AddModelError("errors", "Password must be at leatest 6 characters");
+                    ModelState.AddModelError("errors", "Password must be at least 6 characters");
                     return BadRequest(ModelState);
                 }
 
@@ -91,13 +102,13 @@ namespace IdaraTechApi.Controllers
             }
             else
             {
-                // editing an existing mmember
+                // editing an existing member
 
                 if (!string.IsNullOrEmpty(model.Password))
                 {
                     if (model.Password.Length < 6)
                     {
-                        ModelState.AddModelError("errors", "Password must be at leatest 6 characters");
+                        ModelState.AddModelError("errors", "Password must be at least 6 characters");
                         return BadRequest(ModelState);
                     }
                 }
@@ -126,7 +137,7 @@ namespace IdaraTechApi.Controllers
             // removing users' existing role(s)
             await _userManager.RemoveFromRolesAsync(user, userRoles);
 
-            foreach(var role in model.Roles.Split(",").ToArray())
+            foreach (var role in model.Roles.Split(",").ToArray())
             {
                 var roleToAdd = await _roleManager.Roles.FirstOrDefaultAsync(r => r.Name == role);
                 if (roleToAdd != null)
@@ -196,10 +207,9 @@ namespace IdaraTechApi.Controllers
             return Ok(await _roleManager.Roles.Select(x => x.Name).ToListAsync());
         }
 
-
         private bool IsAdminUserId(string userId)
         {
-            return _userManager.FindByIdAsync(userId).GetAwaiter().GetResult().UserName.Equals("");
+            return _userManager.FindByIdAsync(userId).GetAwaiter().GetResult().UserName.Equals(SD.AdminUserName);
         }
     }
 }

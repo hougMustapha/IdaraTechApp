@@ -138,6 +138,7 @@ export class LoginComponent implements OnInit {
     };
   }
 
+  
   private async googleCallback(response: CredentialResponse) {
     const decodedToken: any = jwtDecode(response.credential);
     this.accountService.loginWithThirdParty(new LoginWithExternal(response.credential, decodedToken.sub, "google"))

@@ -10,5 +10,7 @@ namespace IdaraTech_Admin.Data
         {
             
         }
+
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
     }
 }

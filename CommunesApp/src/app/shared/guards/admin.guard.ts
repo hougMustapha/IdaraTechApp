@@ -4,30 +4,34 @@ import { Observable, map } from 'rxjs';
 import { AccountService } from 'src/app/account/account.service';
 import { SharedService } from '../shared.service';
 import { User } from '../models/account/user';
-
+import { jwtDecode } from 'jwt-decode';
 
 @Injectable({
   providedIn: 'root'
 })
-export class AuthorizationGuard {
-  constructor(private accountService:AccountService,
-    private sharedService: SharedService,
-    private router: Router) {}
+export class AdminGuard {
 
-  canActivate(
-    route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot): Observable<boolean> {
+  constructor(private accountService: AccountService,
+    private sharedService: SharedService,
+    private router: Router) { }
+
+  canActivate(): Observable<boolean> {
     return this.accountService.user$.pipe(
       map((user: User | null) => {
+
         if (user) {
-          return true;
-        } else {
-          this.sharedService.showNotification(false, 'Restricted Area', 'Leave immediately!');
-          this.router.navigate(['account/login'], {queryParams: {returnUrl: state.url}});
-          return false;
+          const decodedToken: any = jwtDecode(user.jwt);
+          if (decodedToken.role.includes('Admin')) {
+            return true;
+          }
         }
+
+        this.sharedService.showNotification(false, 'Admin Area', 'Leave now!');
+        this.router.navigateByUrl('/');
+
+        return false;
       })
     );
   }
-  
+
 }
