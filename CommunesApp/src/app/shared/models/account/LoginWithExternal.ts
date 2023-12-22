@@ -1,7 +1,7 @@
 export class LoginWithExternal {
     accessToken: string;
     userId: string;
-    provider: string
+    provider: string;
 
     constructor(accessToken: string, userId: string, provider: string) {
         this.accessToken = accessToken;

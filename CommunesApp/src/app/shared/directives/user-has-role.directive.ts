@@ -1,7 +1,7 @@
 import { Directive, Input, OnInit, TemplateRef, ViewContainerRef } from '@angular/core';
 import { take } from 'rxjs';
 import { AccountService } from 'src/app/account/account.service';
-import { jwtDecode } from 'jwt-decode' ;
+import { jwtDecode } from 'jwt-decode';
 
 @Directive({
   selector: '[appUserHasRole]'

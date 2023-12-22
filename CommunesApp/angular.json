@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "CommunesApp": {
+    "ClientApp": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -110,6 +110,6 @@
     }
   },
   "cli": {
-    "analytics": "c7917582-2095-4421-8f06-e02e610e9f6c"
+    "analytics": "a6b2b116-4b9f-4b2b-8209-030bafef2ade"
   }
 }

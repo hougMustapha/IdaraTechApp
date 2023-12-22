@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
+import { Router } from '@angular/router';
 import { Observable, map } from 'rxjs';
 import { AccountService } from 'src/app/account/account.service';
 import { SharedService } from '../shared.service';
+import { jwtDecode } from 'jwt-decode' ;
 import { User } from '../models/account/user';
-import { jwtDecode } from 'jwt-decode';
 
 @Injectable({
   providedIn: 'root'
@@ -25,7 +25,7 @@ export class AdminGuard {
             return true;
           }
         }
-
+        
         this.sharedService.showNotification(false, 'Admin Area', 'Leave now!');
         this.router.navigateByUrl('/');
 
@@ -33,5 +33,5 @@ export class AdminGuard {
       })
     );
   }
-
+  
 }

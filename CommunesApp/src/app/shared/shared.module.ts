@@ -9,7 +9,6 @@ import { NotificationComponent } from './components/modals/notification/notifica
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { UserHasRoleDirective } from './directives/user-has-role.directive';
 import { ExpiringSessionCountdownComponent } from './components/modals/expiring-session-countdown/expiring-session-countdown.component';
-
 @NgModule({
   declarations: [
     NotFoundComponent,
@@ -29,7 +28,8 @@ import { ExpiringSessionCountdownComponent } from './components/modals/expiring-
     RouterModule,
     ReactiveFormsModule,
     HttpClientModule,
-    ValidationMessagesComponent
+    ValidationMessagesComponent,
+    UserHasRoleDirective
   ]
 })
 export class SharedModule { }

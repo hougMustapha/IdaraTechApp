@@ -5,11 +5,12 @@ import { SharedService } from 'src/app/shared/shared.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { User } from 'src/app/shared/models/account/user';
 import { take } from 'rxjs';
-import { LoginWithExternal } from 'src/app/shared/models/account/LoginWithExternal';
+import { LoginWithExternal } from 'src/app/shared/models/account/loginWithExternal';
 import { DOCUMENT } from '@angular/common';
 import { CredentialResponse } from 'google-one-tap';
 import { jwtDecode } from 'jwt-decode' ;
 declare const FB: any;
+
 
 @Component({
   selector: 'app-login',
@@ -29,7 +30,7 @@ export class LoginComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private sharedService: SharedService,
     private _renderer2: Renderer2,
-    @Inject(DOCUMENT) private _document: Document) {
+    @Inject(DOCUMENT) private _document: Document) { 
       this.accountService.user$.pipe(take(1)).subscribe({
         next: (user: User | null) => {
           if (user) {
@@ -79,7 +80,7 @@ export class LoginComponent implements OnInit {
             this.router.navigateByUrl(this.returnUrl);
           } else {
             this.router.navigateByUrl('/');
-          }         
+          }
         },
         error: error => {
           if (error.error.errors) {
@@ -87,7 +88,7 @@ export class LoginComponent implements OnInit {
           } else {
             this.errorMessages.push(error.error);
           }
-        }        
+        }
       })
     }
   }

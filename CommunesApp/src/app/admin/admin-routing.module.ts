@@ -1,8 +1,8 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AdminComponent } from './admin.component';
-import { AdminGuard } from '../shared/guards/admin.guard';
 import { AddEditMemberComponent } from './add-edit-member/add-edit-member.component';
+import { AdminGuard } from '../shared/guards/admin.guard';
 
 const routes: Routes = [
   {

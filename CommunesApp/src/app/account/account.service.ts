@@ -8,10 +8,10 @@ import { Router } from '@angular/router';
 import { ConfirmEmail } from '../shared/models/account/confirmEmail';
 import { ResetPassword } from '../shared/models/account/resetPassword';
 import { RegisterWithExternal } from '../shared/models/account/registerWithExternal';
-import { LoginWithExternal } from '../shared/models/account/LoginWithExternal';
+import { environment } from 'src/environments/environment';
 import { jwtDecode } from 'jwt-decode';
 import { SharedService } from '../shared/shared.service';
-import { environment } from 'src/environments/environment';
+import { LoginWithExternal } from '../shared/models/account/loginWithExternal';
 
 @Injectable({
   providedIn: 'root'
@@ -22,45 +22,46 @@ export class AccountService {
 
   refreshTokenTimeout: any;
   timeoutId: any;
-  
+
   constructor(private http: HttpClient, 
     private router: Router,
     private sharedService: SharedService) { }
-  
-    refreshToken = async () => {
-      this.http.post<User>(`${environment.appUrl}account/refresh-token`, {}, {withCredentials: true})
-      .subscribe({
-        next: (user: User) => {
-          if (user) {
-            this.setUser(user);
-          }
-        }, error: error => {
-          this.sharedService.showNotification(false, 'Error', error.error);
-          this.logout();
+
+  refreshToken = async () => {
+    this.http.post<User>(`${environment.appUrl}account/refresh-token`, {}, {withCredentials: true})
+    .subscribe({
+      next: (user: User) => {
+        if (user) {
+          this.setUser(user);
         }
-      })
-    }
-  
-    refreshUser(jwt: string | null) {
-      if (jwt === null) {
-        this.userSource.next(null);
-        return of(undefined);
+      }, error: error => {
+        this.sharedService.showNotification(false, 'Error', error.error);
+        this.logout();
       }
-  
-      let headers = new HttpHeaders();
-      headers = headers.set('Authorization', 'Bearer ' + jwt);
-  
-      return this.http.get<User>(`${environment.appUrl}account/refresh-page`, {headers, withCredentials: true}).pipe(
-        map((user: User) => {
-          if (user) {
-            this.setUser(user);
-          }
-        })
-      )
+    })
+  }
+
+  refreshUser(jwt: string | null) {
+    if (jwt === null) {
+      this.userSource.next(null);
+      return of(undefined);
     }
 
+    let headers = new HttpHeaders();
+    headers = headers.set('Authorization', 'Bearer ' + jwt);
+
+    return this.http.get<User>(`${environment.appUrl}account/refresh-page`, {headers, withCredentials: true}).pipe(
+      map((user: User) => {
+        if (user) {
+          this.setUser(user);
+        }
+      })
+    )
+  }
+
   login(model: Login) {
-    return this.http.post<User>(`${environment.appUrl}account/login`, model).pipe(
+    return this.http.post<User>(`${environment.appUrl}account/login`, model, {withCredentials: true})
+    .pipe(
       map((user: User) => {
         if (user) {
           this.setUser(user);
@@ -70,19 +71,21 @@ export class AccountService {
   }
 
   loginWithThirdParty(model: LoginWithExternal) {
-    return this.http.post<User>(`${environment.appUrl}account/login-with-third-party`, model).pipe(
+    return this.http.post<User>(`${environment.appUrl}account/login-with-third-party`, model, {withCredentials: true})
+    .pipe(
       map((user: User) => {
         if (user) {
           this.setUser(user);
         }
       })
-    );
+    )
   }
-  
+
   logout() {
     localStorage.removeItem(environment.userKey);
     this.userSource.next(null);
     this.router.navigateByUrl('/');
+    this.stopRefreshTokenTimer();
   }
 
   register(model: Register) {
@@ -103,7 +106,7 @@ export class AccountService {
     return this.http.put(`${environment.appUrl}account/confirm-email`, model);
   }
 
-  resendEmailConfirmationLink(email: string){
+  resendEmailConfirmationLink(email: string) {
     return this.http.post(`${environment.appUrl}account/resend-email-confirmation-link/${email}`, {});
   }
 
@@ -124,7 +127,7 @@ export class AccountService {
       return null;
     }
   }
-  
+
   checkUserIdleTimout() {
     this.user$.pipe(take(1)).subscribe({
       next: (user: User | null) => {
@@ -142,7 +145,7 @@ export class AccountService {
       }
     })
   }
-  
+
   private setUser(user: User) {
     this.stopRefreshTokenTimer();
     this.startRefreshTokenTimer(user.jwt);
@@ -165,6 +168,4 @@ export class AccountService {
   private stopRefreshTokenTimer() {
     clearTimeout(this.refreshTokenTimeout);
   }
-
-
 }
